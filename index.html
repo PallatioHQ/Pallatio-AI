@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Pallatio AI — Decentralized Edge-to-Cloud Autonomous Ecosystem</title>
+    <meta name="description" content="Pallatio AI is a decentralized multi-agent autonomous system powered by Qwen-Max and Qwen-Coder, designed for edge-optimized single-board hardware with sandboxed Docker execution."/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+                    },
+                    animation: {
+                        'gradient': 'gradient 8s ease infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'fade-in-up-delay': 'fadeInUp 0.8s ease-out 0.2s forwards',
+                        'fade-in-up-delay-2': 'fadeInUp 0.8s ease-out 0.4s forwards',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        gradient: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 20px rgba(139, 92, 246, 0.3)' },
+                            '100%': { boxShadow: '0 0 40px rgba(139, 92, 246, 0.6), 0 0 80px rgba(139, 92, 246, 0.2)' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #0a0a0f;
+            color: #e2e8f0;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #a78bfa 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient 8s ease infinite;
+        }
+
+        .hero-gradient {
+            background: radial-gradient(ellipse at 50% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(167, 139, 250, 0.06) 0%, transparent 50%);
+        }
+
+        .card-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-glass:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15);
+        }
+
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(139, 92, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 92, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .nav-blur {
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .badge {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .cta-button:hover::before {
+            opacity: 1;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.4);
+        }
+
+        .cta-secondary {
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #a78bfa;
+            transition: all 0.3s ease;
+        }
+
+        .cta-secondary:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .icon-container {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(6, 182, 212, 0.1));
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .terminal-window {
+            background: #12121a;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        .typing-line {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 2s steps(40) forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="nav-blur fixed top-0 w-full z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <span class="text-lg font-bold tracking-tight">Pallatio<span class="text-violet-400">AI</span></span>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm text-gray-400">
+                <a href="#features" class="hover:text-white transition-colors">Features</a>
+                <a href="#architecture" class="hover:text-white transition-colors">Architecture</a>
+                <a href="#stack" class="hover:text-white transition-colors">Tech Stack</a>
+                <a href="https://github.com/PallatioHQ/pallatio-ai" target="_blank" class="flex items-center gap-2 hover:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient grid-bg relative min-h-screen flex items-center justify-center pt-20">
+        <!-- Animated orbs -->
+        <div class="orb w-96 h-96 bg-violet-600 top-20 -left-48 animate-float" style="animation-delay: 0s;"></div>
+        <div class="orb w-80 h-80 bg-cyan-600 bottom-20 -right-40 animate-float" style="animation-delay: 3s;"></div>
+        <div class="orb w-64 h-64 bg-purple-600 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse-slow"></div>
+
+        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+            <!-- Badge -->
+            <div class="animate-fade-in-up opacity-0 mb-8">
+                <span class="badge inline-block px-4 py-2 rounded-full">⚡ Decentralized Autonomous System</span>
+            </div>
+
+            <!-- Main Heading -->
+            <h1 class="animate-fade-in-up opacity-0 text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.9] mb-6">
+                <span class="gradient-text">Pallatio AI</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="animate-fade-in-up-delay opacity-0 text-lg sm:text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-4 leading-relaxed font-light">
+                Multi-agent swarm intelligence that <strong class="text-white font-semibold">reasons</strong>, <strong class="text-white font-semibold">codes</strong>, and <strong class="text-white font-semibold">self-heals</strong> — from the edge to the cloud.
+            </p>
+            <p class="animate-fade-in-up-delay opacity-0 text-base text-gray-500 max-w-2xl mx-auto mb-10">
+                Powered by Qwen-Max for reasoning and Qwen-Coder for execution. Designed for lightweight Linux on single-board hardware.
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="animate-fade-in-up-delay-2 opacity-0 flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                <a href="https://github.com/PallatioHQ/pallatio-ai" target="_blank" class="cta-button relative px-8 py-4 rounded-xl text-white font-semibold text-base">
+                    <span class="relative z-10 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        View on GitHub
+                    </span>
+                </a>
+                <a href="#features" class="cta-secondary px-8 py-4 rounded-xl font-semibold text-base">
+                    Explore Features →
+                </a>
+            </div>
+
+            <!-- Terminal Preview -->
+            <div class="animate-fade-in-up-delay-2 opacity-0 max-w-2xl mx-auto">
+                <div class="terminal-window rounded-2xl overflow-hidden shadow-2xl">
+                    <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5">
+                        <div class="terminal-dot bg-red-500/80"></div>
+                        <div class="terminal-dot bg-yellow-500/80"></div>
+                        <div class="terminal-dot bg-green-500/80"></div>
+                        <span class="ml-3 text-xs text-gray-500">pallatio-orchestrator</span>
+                    </div>
+                    <div class="p-6 text-left text-sm leading-7">
+                        <p><span class="text-green-400">$</span> <span class="text-gray-300">pallatio orchestrate --mode autonomous</span></p>
+                        <p class="text-gray-500">╭─ Pallatio AI v0.1.0 ─────────────────────────╮</p>
+                        <p class="text-gray-500">│                                               │</p>
+                        <p class="text-violet-400">│  ▶ Recon Agent    <span class="text-green-400">scanning environment...</span>     │</p>
+                        <p class="text-cyan-400">│  ▶ Coder Agent    <span class="text-green-400">generating solution...</span>     │</p>
+                        <p class="text-purple-400">│  ▶ QA Agent       <span class="text-green-400">validating output...</span>       │</p>
+                        <p class="text-gray-500">│                                               │</p>
+                        <p class="text-gray-500">╰───────────────────────────────────────────────╯</p>
+                        <p class="text-green-400 mt-1">✓ All agents operational. Mesh synchronized.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="relative py-32 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <span class="badge inline-block px-4 py-2 rounded-full mb-6">Core Capabilities</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    Engineered for <span class="gradient-text">Autonomous Operations</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    Three pillars of intelligence working in concert to deliver self-governing, resilient, and adaptive AI infrastructure.
+                </p>
+            </div>
+
+            <!-- Feature Grid -->
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1: Multi-Agent Swarm -->
+                <div class="card-glass rounded-2xl p-8 group">
+                    <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Multi-Agent Swarm</h3>
+                    <p class="text-gray-400 leading-relaxed mb-6">
+                        Coordinated ensemble of Recon, Coder, and QA agents operating in a continuous feedback loop. Shared state bus enables emergent problem-solving.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs px-3 py-1 rounded-full bg-violet-500/10 text-violet-300 border border-violet-500/20">Qwen-Max</span>
+                        <span class="text-xs px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">Qwen-Coder</span>
+                        <span class="text-xs px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20">Swarm Logic</span>
+                    </div>
+                </div>
+
+                <!-- Feature 2: Edge-Optimized -->
+                <div class="card-glass rounded-2xl p-8 group">
+                    <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Edge-Optimized</h3>
+                    <p class="text-gray-400 leading-relaxed mb-6">
+                        Purpose-built for Amlogic S9xx single-board hardware running custom Linux OS. Under 512MB footprint with full orchestration capability.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">aml-s9xx</span>
+                        <span class="text-xs px-3 py-1 rounded-full bg-orange-500/10 text-orange-300 border border-orange-500/20">&lt;512MB</span>
+                        <span class="text-xs px-3 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20">Custom Linux</span>
+                    </div>
+                </div>
+
+                <!-- Feature 3: Sandbox Execution -->
+                <div class="card-glass rounded-2xl p-8 group">
+                    <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Sandbox Execution</h3>
+                    <p class="text-gray-400 leading-relaxed mb-6">
+                        Ephemeral Docker containers with network isolation, resource capping, and automatic rollback. Self-healing code pipeline with configurable retry depth.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs px-3 py-1 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20">Docker</span>
+                        <span class="text-xs px-3 py-1 rounded-full bg-red-500/10 text-red-300 border border-red-500/20">Isolation</span>
+                        <span class="text-xs px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-500/20">Self-Healing</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="relative py-32 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <span class="badge inline-block px-4 py-2 rounded-full mb-6">System Design</span>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                        <span class="gradient-text">Self-Healing</span> Execution Loop
+                    </h2>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-8">
+                        Every task passes through a rigorous four-stage pipeline: generation, execution, validation, and healing. Failed executions automatically trigger corrective synthesis — no human intervention required.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-violet-500/15 border border-violet-500/20 flex items-center justify-center text-violet-400 font-mono font-bold text-sm shrink-0">01</div>
+                            <div>
+                                <p class="font-semibold text-white">Generate</p>
+                                <p class="text-gray-500 text-sm">Coder agent synthesizes solution from task specification</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-cyan-500/15 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-mono font-bold text-sm shrink-0">02</div>
+                            <div>
+                                <p class="font-semibold text-white">Execute</p>
+                                <p class="text-gray-500 text-sm">Sandboxed Docker container runs generated artifacts</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-mono font-bold text-sm shrink-0">03</div>
+                            <div>
+                                <p class="font-semibold text-white">Validate</p>
+                                <p class="text-gray-500 text-sm">QA agent verifies output against acceptance criteria</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-rose-500/15 border border-rose-500/20 flex items-center justify-center text-rose-400 font-mono font-bold text-sm shrink-0">04</div>
+                            <div>
+                                <p class="font-semibold text-white">Heal</p>
+                                <p class="text-gray-500 text-sm">Automatic error diagnosis and corrective code regeneration</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Architecture Diagram Card -->
+                <div class="card-glass rounded-2xl p-8">
+                    <div class="terminal-window rounded-xl overflow-hidden">
+                        <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5">
+                            <div class="terminal-dot bg-red-500/80"></div>
+                            <div class="terminal-dot bg-yellow-500/80"></div>
+                            <div class="terminal-dot bg-green-500/80"></div>
+                            <span class="ml-3 text-xs text-gray-500">architecture.yml</span>
+                        </div>
+                        <div class="p-6 text-xs sm:text-sm leading-6 font-mono">
+                            <p><span class="text-violet-400">mesh</span><span class="text-gray-500">:</span></p>
+                            <p class="ml-4"><span class="text-cyan-400">topology</span><span class="text-gray-500">:</span> <span class="text-emerald-400">decentralized</span></p>
+                            <p class="ml-4"><span class="text-cyan-400">agents</span><span class="text-gray-500">:</span></p>
+                            <p class="ml-8"><span class="text-gray-500">-</span> <span class="text-cyan-400">name</span><span class="text-gray-500">:</span> <span class="text-amber-400">recon</span></p>
+                            <p class="ml-10"><span class="text-cyan-400">model</span><span class="text-gray-500">:</span> <span class="text-emerald-400">qwen-max</span></p>
+                            <p class="ml-10"><span class="text-cyan-400">role</span><span class="text-gray-500">:</span> <span class="text-emerald-400">reconnaissance</span></p>
+                            <p class="ml-8"><span class="text-gray-500">-</span> <span class="text-cyan-400">name</span><span class="text-gray-500">:</span> <span class="text-amber-400">coder</span></p>
+                            <p class="ml-10"><span class="text-cyan-400">model</span><span class="text-gray-500">:</span> <span class="text-emerald-400">qwen-coder</span></p>
+                            <p class="ml-10"><span class="text-cyan-400">role</span><span class="text-gray-500">:</span> <span class="text-emerald-400">code-synthesis</span></p>
+                            <p class="ml-8"><span class="text-gray-500">-</span> <span class="text-cyan-400">name</span><span class="text-gray-500">:</span> <span class="text-amber-400">qa</span></p>
+                            <p class="ml-10"><span class="text-cyan-400">model</span><span class="text-gray-500">:</span> <span class="text-emerald-400">qwen-max</span></p>
+                            <p class="ml-10"><span class="text-cyan-400">role</span><span class="text-gray-500">:</span> <span class="text-emerald-400">validation</span></p>
+                            <p class="ml-4"><span class="text-cyan-400">sandbox</span><span class="text-gray-500">:</span></p>
+                            <p class="ml-8"><span class="text-cyan-400">runtime</span><span class="text-gray-500">:</span> <span class="text-emerald-400">docker</span></p>
+                            <p class="ml-8"><span class="text-cyan-400">isolation</span><span class="text-gray-500">:</span> <span class="text-emerald-400">network-none</span></p>
+                            <p class="ml-8"><span class="text-cyan-400">max_retries</span><span class="text-gray-500">:</span> <span class="text-orange-400">3</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section id="stack" class="relative py-32 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto text-center">
+            <span class="badge inline-block px-4 py-2 rounded-full mb-6">Intelligence Stack</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-16">
+                Powered by <span class="gradient-text">Frontier Models</span>
+            </h2>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                <div class="card-glass rounded-2xl p-6 text-center">
+                    <p class="stat-number text-3xl font-black mb-2">Qwen</p>
+                    <p class="text-sm text-gray-400">Max + Coder</p>
+                </div>
+                <div class="card-glass rounded-2xl p-6 text-center">
+                    <p class="stat-number text-3xl font-black mb-2">&lt;512MB</p>
+                    <p class="text-sm text-gray-400">Edge Footprint</p>
+                </div>
+                <div class="card-glass rounded-2xl p-6 text-center">
+                    <p class="stat-number text-3xl font-black mb-2">3-Agent</p>
+                    <p class="text-sm text-gray-400">Swarm Topology</p>
+                </div>
+                <div class="card-glass rounded-2xl p-6 text-center">
+                    <p class="stat-number text-3xl font-black mb-2">0-Touch</p>
+                    <p class="text-sm text-gray-400">Self-Healing</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-12 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-6 h-6 rounded-md bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <span class="text-sm text-gray-500">© 2026 PallatioHQ. All rights reserved.</span>
+            </div>
+            <div class="flex items-center gap-6 text-sm text-gray-500">
+                <a href="https://github.com/PallatioHQ/pallatio-ai" target="_blank" class="hover:text-white transition-colors">GitHub</a>
+                <a href="#" class="hover:text-white transition-colors">Documentation</a>
+                <a href="#" class="hover:text-white transition-colors">License</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Intersection Observer for scroll animations -->
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.card-glass').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
